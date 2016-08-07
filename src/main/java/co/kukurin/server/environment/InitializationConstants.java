@@ -12,6 +12,7 @@ public final class InitializationConstants {
     public static final String NUM_SERVER_THREADS_KEY = "server.nthreads";
     public static final String WEB_BASE_DIR_KEY = "server.basedir";
     public static final String DEFAULT_WEB_BASE_DIR = "web";
+    public static final String DEFAULT_ERROR_FILE_KEY = "error";
 
     private InitializationConstants() {
         ExceptionUtils.throwNonInstantiable();

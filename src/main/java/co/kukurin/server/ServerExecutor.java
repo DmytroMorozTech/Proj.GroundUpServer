@@ -44,8 +44,7 @@ class ServerExecutor implements Runnable {
         outputStream.flush();
     }
 
-    private void tryToGetResource() throws IOException {
-
+    private void tryToGetResource() {
         ErrorHandler
                 .catchIfThrows(() -> {
                     Path resourcePath = pathResolver.getResourcePath(headers.getResource());

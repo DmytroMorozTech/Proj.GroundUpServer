@@ -9,6 +9,8 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Optional;
 
+import static co.kukurin.server.environment.InitializationConstants.*;
+
 public class PathResolver {
 
     private final String serverBaseDirectory;
@@ -28,10 +30,10 @@ public class PathResolver {
     }
 
     public byte[] getErrorMessage() {
-        Path errorLocationPath = getResourcePath("error");
+        Path errorLocationPath = getResourcePath(DEFAULT_ERROR_FILE_KEY);
         return Optional
                 .ofNullable(getBytes(errorLocationPath))
-                .orElse("Error accessing file.".getBytes());
+                .orElse("Error accessing file".getBytes());
     }
 
     private byte[] getBytes(Path errorLocationPath) {
