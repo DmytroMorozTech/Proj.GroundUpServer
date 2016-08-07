@@ -10,14 +10,14 @@ public class ErrorHandler {
         this.exception = exception;
     }
 
-    public void handleException(Consumer<Exception> handler) {
+    public void handleExceptionAs(Consumer<Exception> handler) {
         if(this.exception != null)
             handler.accept(exception);
     }
 
-    public void rethrowAsUncheckedFirstInvoking(Runnable doBeforeThrowing) {
-        doBeforeThrowing.run();
-        rethrowAsUnchecked();
+    public ErrorHandler finalizingWith(Runnable doAfter) {
+        doAfter.run();
+        return this;
     }
 
     public void rethrowAsUnchecked() {
@@ -25,7 +25,19 @@ public class ErrorHandler {
             throw new RuntimeException(exception);
     }
 
-    public static ErrorHandler catchException(ThrowableRunnable r) {
+    public ErrorHandler chainIfNoException(ThrowableRunnable r) {
+        if(this.exception == null) {
+            try {
+                r.run();
+            } catch(Exception e) {
+                this.exception = e;
+            }
+        }
+
+        return this;
+    }
+
+    public static ErrorHandler catchIfThrows(ThrowableRunnable r) {
         try {
             r.run();
         } catch(Exception e) {

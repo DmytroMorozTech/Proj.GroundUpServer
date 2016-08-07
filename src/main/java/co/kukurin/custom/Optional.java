@@ -8,7 +8,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
- * Exactly the same as Java's Optional, only with an orElse method.
+ * Exactly the same as java.util.Optional, but including a much needed orElse method.
  * @param <T>
  */
 public final class Optional<T> {
@@ -45,7 +45,7 @@ public final class Optional<T> {
      * @return an empty {@code Optional}
      */
     public static<T> Optional<T> empty() {
-        @SuppressWarnings("catchException")
+        @SuppressWarnings("catchIfThrows")
         Optional<T> t = (Optional<T>) EMPTY;
         return t;
     }

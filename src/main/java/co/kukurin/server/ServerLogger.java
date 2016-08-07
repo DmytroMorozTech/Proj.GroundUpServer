@@ -37,7 +37,7 @@ public final class ServerLogger {
     }
 
     public void error(String description, Exception exception) {
-        write("ERROR", description + exception.getMessage());
+        write("ERROR", description + ": " + exception.getMessage());
     }
 
     private void write(String prefix, String content) {

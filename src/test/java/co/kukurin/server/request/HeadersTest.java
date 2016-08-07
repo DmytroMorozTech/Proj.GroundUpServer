@@ -51,7 +51,8 @@ public class HeadersTest {
         return "POST / HTTP/1.1\n"
                 + AUTHORIZATION_HEADER_LINE
                 + "\n\n"
-                + HEADER_BODY;
+                + HEADER_BODY
+                + "\n\n";
     }
 
     private String getGivenHeaders() {
