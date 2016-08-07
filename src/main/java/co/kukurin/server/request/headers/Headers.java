@@ -18,7 +18,7 @@ public class Headers {
     private String body;
 
     public static Headers fromInputStream(InputStream inputStream) throws IOException {
-        return HeaderFactory.fromInputStream(inputStream);
+        return HeaderParser.fromInputStream(inputStream);
     }
 
 }
