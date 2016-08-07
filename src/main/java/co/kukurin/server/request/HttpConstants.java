@@ -5,7 +5,9 @@ import lombok.Getter;
 
 public class HttpConstants {
 
-    public enum Method { GET, POST, PUT, DELETE }
+    public enum Method {
+        GET, POST, PUT, DELETE
+    }
 
     @Getter
     @AllArgsConstructor

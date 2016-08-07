@@ -44,6 +44,17 @@ class ServerExecutor implements Runnable {
         outputStream.flush();
     }
 
+    private void initializeStreamsAndHeaders() throws IOException {
+        inputStream = new PushbackInputStream(socket.getInputStream());
+        outputStream = new BufferedOutputStream(socket.getOutputStream());
+        headers = Headers.fromInputStream(inputStream);
+    }
+
+    private void logRequest() {
+        logger.info("Received " + headers.getRequestType()
+                + " request for " + headers.getResource());
+    }
+
     private void tryToGetResource() {
         ErrorHandler
                 .catchIfThrows(() -> {
@@ -52,9 +63,7 @@ class ServerExecutor implements Runnable {
                     byte[] fileContents = Files.readAllBytes(resourcePath);
                     outputStream.write(fileContents);
                 }).handleExceptionAs(e -> {
-                    String errorMessage = "Error getting resources: " + e.getMessage();
-                    logger.error(errorMessage);
-
+                    logger.error("Error getting resources", e);
                     redirectToError();
                 });
     }
@@ -64,17 +73,6 @@ class ServerExecutor implements Runnable {
         // also should send a 404 header.
         byte[] errorMessageClientOutput = pathResolver.getErrorMessage();
         ErrorHandler.ignoreIfThrows(() -> outputStream.write(errorMessageClientOutput));
-    }
-
-    private void logRequest() {
-        logger.info("Received " + headers.getRequestType()
-                + " request for " + headers.getResource());
-    }
-
-    private void initializeStreamsAndHeaders() throws IOException {
-        inputStream = new PushbackInputStream(socket.getInputStream());
-        outputStream = new BufferedOutputStream(socket.getOutputStream());
-        headers = Headers.fromInputStream(inputStream);
     }
 
     private void closeStreams() {
