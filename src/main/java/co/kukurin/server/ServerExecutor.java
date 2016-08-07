@@ -1,7 +1,7 @@
 package co.kukurin.server;
 
 import co.kukurin.custom.ErrorHandler;
-import co.kukurin.server.request.Headers;
+import co.kukurin.server.request.headers.Headers;
 import co.kukurin.server.request.PathResolver;
 
 import java.io.BufferedOutputStream;
