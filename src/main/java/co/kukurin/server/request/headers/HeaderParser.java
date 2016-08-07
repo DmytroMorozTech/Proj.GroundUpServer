@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static co.kukurin.server.request.HttpConstants.Ascii.CR;
+import static co.kukurin.server.request.HttpConstants.Ascii.CARRIAGE_RETURN;
+import static co.kukurin.server.request.headers.HeaderRequestReadState.READ_DOUBLE_NEWLINE;
+import static co.kukurin.server.request.headers.HeaderRequestReadState.determineNextState;
 
 class HeaderParser {
 
@@ -46,11 +48,11 @@ class HeaderParser {
 
             if(currentCharacter == -1)
                 throw new MalformedRequestException("Client closed the request prematurely.");
-            else if(currentCharacter != CR.getIntValue())
+            else if(currentCharacter != CARRIAGE_RETURN.getIntValue())
                 outputStream.write(currentCharacter);
 
-            currentState = HeaderRequestReadState.determineNextState(currentState, currentCharacter);
-            if(currentState == HeaderRequestReadState.READ_DOUBLE_NEWLINE) {
+            currentState = determineNextState(currentState, currentCharacter);
+            if(currentState == READ_DOUBLE_NEWLINE) {
                 if(inputStream.available() > 0)
                     currentState = HeaderRequestReadState.INITIAL;
                 else break;

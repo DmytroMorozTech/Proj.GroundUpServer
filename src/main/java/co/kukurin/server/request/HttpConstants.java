@@ -12,7 +12,7 @@ public class HttpConstants {
     @Getter
     @AllArgsConstructor
     public enum Ascii {
-        CR(13), LF(10);
+        LINE_FEED(10), CARRIAGE_RETURN(13);
         private int intValue;
     }
 

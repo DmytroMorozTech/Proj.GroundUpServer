@@ -1,7 +1,7 @@
 package co.kukurin.server.request.headers;
 
-import static co.kukurin.server.request.HttpConstants.Ascii.CR;
-import static co.kukurin.server.request.HttpConstants.Ascii.LF;
+import static co.kukurin.server.request.HttpConstants.Ascii.CARRIAGE_RETURN;
+import static co.kukurin.server.request.HttpConstants.Ascii.LINE_FEED;
 
 enum HeaderRequestReadState {
     INITIAL,
@@ -16,27 +16,35 @@ enum HeaderRequestReadState {
                                                      int character) {
         switch(state) {
             case INITIAL:
-                if(character == CR.getIntValue()) state = READ_CR;
-                else if(character == LF.getIntValue()) state = READ_LF;
+                if(isCr(character)) state = READ_CR;
+                else if(isLf(character)) state = READ_LF;
                 break;
             case READ_CR:
-                if(character == LF.getIntValue()) state = READ_CR_LF;
+                if(isLf(character)) state = READ_CR_LF;
                 else state = INITIAL;
                 break;
             case READ_CR_LF:
-                if(character == CR.getIntValue()) state = READ_CR_LF_CR;
+                if(isCr(character)) state = READ_CR_LF_CR;
                 else state = INITIAL;
                 break;
             case READ_CR_LF_CR:
-                if(character == LF.getIntValue()) state = READ_DOUBLE_NEWLINE;
+                if(isLf(character)) state = READ_DOUBLE_NEWLINE;
                 else state = INITIAL;
                 break;
             case READ_LF:
-                if(character == LF.getIntValue()) state = READ_DOUBLE_NEWLINE;
+                if(isLf(character)) state = READ_DOUBLE_NEWLINE;
                 else state = INITIAL;
                 break;
         }
 
         return state;
+    }
+
+    private static boolean isLf(int character) {
+        return character == LINE_FEED.getIntValue();
+    }
+
+    private static boolean isCr(int character) {
+        return character == CARRIAGE_RETURN.getIntValue();
     }
 }
