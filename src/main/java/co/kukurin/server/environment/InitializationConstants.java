@@ -1,6 +1,6 @@
 package co.kukurin.server.environment;
 
-import co.kukurin.helpers.ExceptionUtils;
+import static co.kukurin.helpers.ExceptionUtils.throwNonInstantiable;
 
 public final class InitializationConstants {
 
@@ -15,7 +15,7 @@ public final class InitializationConstants {
     public static final String DEFAULT_ERROR_FILE_KEY = "error";
 
     private InitializationConstants() {
-        ExceptionUtils.throwNonInstantiable();
+        throwNonInstantiable();
     }
 
 }

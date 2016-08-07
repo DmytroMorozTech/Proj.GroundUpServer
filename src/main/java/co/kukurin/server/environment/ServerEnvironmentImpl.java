@@ -28,7 +28,7 @@ public class ServerEnvironmentImpl implements ServerEnvironment {
     private final PathResolver pathResolver;
     private final Server server;
 
-    @SuppressWarnings("unused") // no usage for now, maybe will add support for property finding via annotations.
+    @SuppressWarnings("unused") // no usage of class for now, maybe will add support for property finding via annotations.
     public ServerEnvironmentImpl(Class<?> applicationMainClass) {
         this.logger = ServerLogger.getInstance();
         this.properties = loadProperties();
@@ -76,7 +76,7 @@ public class ServerEnvironmentImpl implements ServerEnvironment {
             Map<String, String> map = Files.walk(Paths.get(serverBaseDirectory))
                     .filter(Files::isRegularFile)
                     .collect(Collectors.toMap(
-                            file -> "/" + ((Path) file).getFileName().toString(),
+                            file -> "/" + ((Path) file).getFileName().toString(), // TODO String -> class
                             file -> "/" + ((Path) file).getFileName().toString()));
             map.put("/", "/index.html");
             return map;
