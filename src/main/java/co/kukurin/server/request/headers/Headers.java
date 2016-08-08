@@ -123,21 +123,17 @@ public class Headers {
         return currentState;
     }
 
-    private boolean methodCouldContainRequestBody() {
-        return !requestMethod.equals(HttpConstants.Method.GET.name());
-    }
-
     private int requireExistingContentLengthProperty() {
         return Optional.ofNullable(properties.get(CONTENT_LENGTH))
-                    .map(String::trim)
-                    .map(Integer::parseInt)
-                    .orElseThrow(() -> new MalformedRequestException("Missing valid content length"));
+                .map(String::trim)
+                .map(Integer::parseInt)
+                .orElseThrow(() -> new MalformedRequestException("Missing valid content length"));
     }
 
     private int getFromStreamOrThrowIfClosed(InputStream inputStream) throws IOException {
         int current = inputStream.read();
         if(current == -1)
-            throw new ServerException("Connection closed prematurely.");
+            throw new MalformedRequestException("Connection closed prematurely.");
         return current;
     }
 
@@ -156,6 +152,10 @@ public class Headers {
                 return;
 
         outputStream.write(currentCharacter);
+    }
+
+    private boolean methodCouldContainRequestBody() {
+        return !requestMethod.equals(HttpConstants.Method.GET.name());
     }
 
     private boolean isSingleNewlineState(HeaderRequestReadState currentState) {
