@@ -97,16 +97,16 @@ public class Headers {
         return currentState;
     }
 
+    private boolean isDoubleNewlineState(HeaderRequestReadState currentState) {
+        return currentState == READ_DOUBLE_NEWLINE;
+    }
+
     private String[] splitCurrentBufferIntoKeyAndValue(ByteArrayOutputStream outputStream) {
         final int keyAndValueExpectedSize = 2;
         String[] keyAndValue = flushAndResetStream(outputStream).split(KEY_VALUE_SPLITTER, keyAndValueExpectedSize);
         if(keyAndValue.length != keyAndValueExpectedSize)
             throw new MalformedRequestException("Unable to split request data into key and value");
         return keyAndValue;
-    }
-
-    private boolean isDoubleNewlineState(HeaderRequestReadState currentState) {
-        return currentState == READ_DOUBLE_NEWLINE;
     }
 
     private HeaderRequestReadState parseFromRequestBody(HeaderRequestReadState currentState,
