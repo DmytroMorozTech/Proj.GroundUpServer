@@ -32,16 +32,15 @@ class ServerExecutor implements Runnable {
     @Override
     public void run() {
         ErrorHandler
-                .catchIfThrows(this::initializeAndReadFromInput)
+                .catchIfThrows(this::handleRequest)
                 .finalizingWith(this::closeStreams)
                 .handleExceptionAs(e -> logger.error("Exception processing socket request", e));
     }
 
-    private void initializeAndReadFromInput() throws IOException {
+    private void handleRequest() throws IOException {
         initializeStreamsAndHeaders();
         logRequest();
-        tryToGetResource();
-        outputStream.flush();
+        outputRequestedResource();
     }
 
     private void initializeStreamsAndHeaders() throws IOException {
@@ -51,11 +50,11 @@ class ServerExecutor implements Runnable {
     }
 
     private void logRequest() {
-        logger.info("Received " + headers.getRequestType()
+        logger.info("Received " + headers.getRequestMethod()
                 + " request for " + headers.getResource());
     }
 
-    private void tryToGetResource() {
+    private void outputRequestedResource() throws IOException {
         ErrorHandler
                 .catchIfThrows(() -> {
                     Path resourcePath = pathResolver.getResourcePath(headers.getResource());
@@ -66,6 +65,7 @@ class ServerExecutor implements Runnable {
                     logger.error("Error getting resources", e);
                     redirectToError();
                 });
+        outputStream.flush();
     }
 
     private void redirectToError() {

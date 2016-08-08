@@ -19,26 +19,26 @@ public class HeadersTest {
     @Test
     public void shouldParseSimpleHeaders() throws Exception {
         // given
-        String givenHeaders = getGivenHeaders();
+        String givenHeaders = givenGetHeaders();
 
         // when
         Headers whenHeaders = Headers.fromInputStream(createInputStream(givenHeaders));
 
         // then
         then(whenHeaders.getProperties().get("Authorization")).isEqualTo(AUTHORIZATION_VALUE);
-        then(whenHeaders.getRequestType()).isEqualTo("GET");
+        then(whenHeaders.getRequestMethod()).isEqualTo("GET");
     }
 
     @Test
     public void shouldParseHeadersWithBody() throws Exception {
         // given
-        String givenHeaders = postGivenHeaders();
+        String givenHeaders = givenPostHeaders();
 
         // when
         Headers whenHeaders = Headers.fromInputStream(createInputStream(givenHeaders));
 
         // then
-        then(whenHeaders.getRequestType()).isEqualTo("POST");
+        then(whenHeaders.getRequestMethod()).isEqualTo("POST");
         then(whenHeaders.getResource()).isEqualTo("/");
         then(whenHeaders.getRequestProtocol()).isEqualTo("HTTP/1.1");
         then(whenHeaders.getBody()).isEqualTo(HEADER_BODY);
@@ -48,22 +48,18 @@ public class HeadersTest {
         return new ByteArrayInputStream(givenInvalidHeaders.getBytes());
     }
 
-    private String postGivenHeaders() {
+    private String givenPostHeaders() {
         return "POST / HTTP/1.1\n"
+                + "content-length: 9\n"
                 + AUTHORIZATION_HEADER_LINE
                 + "\n\n"
                 + HEADER_BODY
                 + "\n\n";
     }
 
-    private String getGivenHeaders() {
+    private String givenGetHeaders() {
         return "GET / HTTP/1.1\n"
                 + AUTHORIZATION_HEADER_LINE
                 + "\n\n";
-    }
-
-    public String getGivenInvalidHeaders() {
-        return "GET / HTTP/1.1"
-                + AUTHORIZATION_HEADER_LINE;
     }
 }

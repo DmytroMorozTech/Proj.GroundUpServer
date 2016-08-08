@@ -1,13 +1,15 @@
 package co.kukurin.server;
 
+import co.kukurin.custom.ErrorHandler;
+
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.Map;
 
 public final class ServerLogger {
 
-    public static final String ERROR_PREFIX = "ERROR";
-    public static final String INFO_PREFIX = "INFO";
+    private static final String ERROR_PREFIX = "[ERROR] ";
+    private static final String INFO_PREFIX = "[INFO] ";
+    private static final String NEWLINE = System.lineSeparator();
     private static final ServerLogger instance = new ServerLogger();
 
     private PrintStream outputLogStream;
@@ -37,23 +39,21 @@ public final class ServerLogger {
     }
 
     public void error(String description, Exception exception) {
-        write("ERROR", description + ": " + exception.getMessage());
+        write(ERROR_PREFIX, description + ": " + exception.getMessage());
     }
 
     private void write(String prefix, String content) {
-        try {
+        ErrorHandler.ignoreIfThrows(() -> {
             byte[] message = defaultMessageAsBytes(prefix, content);
             outputLogStream.write(message);
-        } catch (IOException ignorable) {
-        }
+        });
     }
 
     private byte[] defaultMessageAsBytes(String prefix, String content) {
         return new StringBuilder()
                 .append(prefix)
-                .append(" | ")
                 .append(content)
-                .append(System.lineSeparator())
+                .append(NEWLINE)
                 .toString()
                 .getBytes();
     }

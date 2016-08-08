@@ -73,7 +73,8 @@ public class ServerEnvironmentImpl implements ServerEnvironment {
 
     private Map<String, String> getServerResources(String serverBaseDirectory) {
         try {
-            Map<String, String> map = Files.walk(Paths.get(serverBaseDirectory))
+            Map<String, String> map = Files
+                    .walk(Paths.get(serverBaseDirectory))
                     .filter(Files::isRegularFile)
                     .collect(Collectors.toMap(
                             file -> "/" + ((Path) file).getFileName().toString(), // TODO String -> class
@@ -81,7 +82,7 @@ public class ServerEnvironmentImpl implements ServerEnvironment {
             map.put("/", "/index.html");
             return map;
         } catch(IOException e) {
-            logger.error("Resource mappings not found", e);
+            logger.info("No resource mappings found: " + e.getMessage());
         }
 
         return null;

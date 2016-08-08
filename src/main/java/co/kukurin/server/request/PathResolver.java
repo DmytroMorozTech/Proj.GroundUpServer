@@ -25,10 +25,11 @@ public class PathResolver {
     public Path getResourcePath(String resource) {
         String actual = Optional
                 .ofNullable(resourceToActualFile.get(resource))
-                .orElse(null);
+                .orElse(null); // orElse error?
         return Paths.get(serverBaseDirectory + actual);
     }
 
+    // TODO remove from here
     public byte[] getErrorMessage() {
         Path errorLocationPath = getResourcePath(DEFAULT_ERROR_FILE_KEY);
         return Optional

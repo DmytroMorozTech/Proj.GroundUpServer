@@ -25,7 +25,7 @@ public class ErrorHandler {
             throw new RuntimeException(exception);
     }
 
-    public ErrorHandler chainIfNoException(ThrowableRunnable r) {
+    public ErrorHandler andThen(ThrowableRunnable r) {
         if(this.exception == null) {
             try {
                 r.run();
@@ -51,6 +51,14 @@ public class ErrorHandler {
         try {
             r.run();
         } catch(Exception ignorable) {
+        }
+    }
+
+    public static <T> Optional<T> getEmptyIfThrows(ThrowableSupplier<T> supplier) {
+        try {
+            return Optional.of(supplier.get());
+        } catch(Exception any) {
+            return Optional.empty();
         }
     }
 

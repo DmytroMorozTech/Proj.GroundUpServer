@@ -11,40 +11,38 @@ enum HeaderRequestReadState {
     READ_LF,
     READ_DOUBLE_NEWLINE;
 
-    // TODO would be prettier as abstract HeaderReadState determineNext(int character)
-    static HeaderRequestReadState determineNextState(HeaderRequestReadState state,
-                                                     int character) {
-        switch(state) {
+    // TODO would be prettier as abstract HeaderReadState getNextState(int character)
+    static HeaderRequestReadState determineNextState(HeaderRequestReadState currentState, int character) {
+        switch(currentState) {
             case INITIAL:
-                if(isCr(character)) state = READ_CR;
-                else if(isLf(character)) state = READ_LF;
+                if(isCr(character)) currentState = READ_CR;
+                else if(isLf(character)) currentState = READ_LF;
                 break;
             case READ_CR:
-                if(isLf(character)) state = READ_CR_LF;
-                else state = INITIAL;
+                if(isLf(character)) currentState = READ_CR_LF;
+                else currentState = INITIAL;
                 break;
             case READ_CR_LF:
-                if(isCr(character)) state = READ_CR_LF_CR;
-                else state = INITIAL;
+                if(isCr(character)) currentState = READ_CR_LF_CR;
+                else currentState = INITIAL;
                 break;
             case READ_CR_LF_CR:
-                if(isLf(character)) state = READ_DOUBLE_NEWLINE;
-                else state = INITIAL;
+                if(isLf(character)) currentState = READ_DOUBLE_NEWLINE;
+                else currentState = INITIAL;
                 break;
             case READ_LF:
-                if(isLf(character)) state = READ_DOUBLE_NEWLINE;
-                else state = INITIAL;
+                if(isLf(character)) currentState = READ_DOUBLE_NEWLINE;
+                else currentState = INITIAL;
                 break;
         }
 
-        return state;
+        return currentState;
     }
 
     private static boolean isLf(int character) {
-        return character == LINE_FEED.getIntValue();
+        return character == LINE_FEED;
     }
-
     private static boolean isCr(int character) {
-        return character == CARRIAGE_RETURN.getIntValue();
+        return character == CARRIAGE_RETURN;
     }
 }
