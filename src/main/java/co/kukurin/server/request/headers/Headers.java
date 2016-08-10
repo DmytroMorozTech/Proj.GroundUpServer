@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import static co.kukurin.server.request.HttpConstants.*;
 import static co.kukurin.server.request.HttpConstants.Ascii.*;
 import static co.kukurin.server.request.HttpConstants.HeaderPropertyKeys.CONTENT_LENGTH;
 import static co.kukurin.server.request.HttpConstants.HeaderPropertyKeys.KEY_VALUE_SPLITTER;
@@ -17,7 +18,7 @@ import static co.kukurin.server.request.headers.HeaderRequestReadState.*;
 
 public class Headers {
 
-    private String requestMethod;
+    private Method requestMethod;
     private String resource;
     private String requestProtocol;
     private Map<String, String> properties;
@@ -73,7 +74,7 @@ public class Headers {
             }
         }
 
-        this.requestMethod = methodAndResourceAndProtocol[0];
+        this.requestMethod = Method.valueOf(methodAndResourceAndProtocol[0]);
         this.resource = methodAndResourceAndProtocol[1];
         this.requestProtocol = methodAndResourceAndProtocol[2];
         return currentState;
@@ -155,14 +156,14 @@ public class Headers {
     }
 
     private boolean methodCouldContainRequestBody() {
-        return !requestMethod.equals(HttpConstants.Method.GET.name());
+        return !requestMethod.equals(HttpConstants.Method.GET);
     }
 
     private boolean isSingleNewlineState(HeaderRequestReadState currentState) {
         return currentState == READ_CR_LF || currentState == READ_LF;
     }
 
-    public String getRequestMethod() {
+    public Method getRequestMethod() {
         return requestMethod;
     }
 

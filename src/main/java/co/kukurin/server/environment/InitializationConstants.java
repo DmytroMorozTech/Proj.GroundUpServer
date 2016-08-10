@@ -5,6 +5,7 @@ import static co.kukurin.helpers.ExceptionUtils.throwNonInstantiable;
 public final class InitializationConstants {
 
     static final String PROPERTIES_PATH = "./src/main/resources/config.properties";
+    public static final byte[] DEFAULT_ERROR_MESSAGE_BYTES = "Error accessing file".getBytes();
 
     public static final Integer DEFAULT_PORT = 8080;
 

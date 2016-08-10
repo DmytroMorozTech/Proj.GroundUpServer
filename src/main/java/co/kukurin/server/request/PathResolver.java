@@ -1,44 +1,35 @@
 package co.kukurin.server.request;
 
-import co.kukurin.server.environment.InitializationConstants;
+import co.kukurin.server.resource.Resource;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Optional;
 
-import static co.kukurin.server.environment.InitializationConstants.*;
-
 public class PathResolver {
 
-    private final String serverBaseDirectory;
-    private final Map<String, String> resourceToActualFile;
+    // private final String serverBaseDirectory;
+    private final Map<String, Resource> resourceToActualFile;
 
     public PathResolver(String serverBaseDirectory,
-                        Map<String, String> resourceToActualFile) {
-        this.serverBaseDirectory = serverBaseDirectory;
+                        Map<String, Resource> resourceToActualFile) {
+        // this.serverBaseDirectory = serverBaseDirectory;
         this.resourceToActualFile = resourceToActualFile;
     }
 
-    public Path getResourcePath(String resource) {
-        String actual = Optional
-                .ofNullable(resourceToActualFile.get(resource))
-                .orElse(null); // orElse error?
-        return Paths.get(serverBaseDirectory + actual);
+    public byte[] getResourceResponse(String resource, HttpConstants.Method method) {
+        Resource requestedResource = resourceToActualFile.get(resource);
+        Object response = requestedResource.get();
+
+        return deserialize(response);
     }
 
-    // TODO remove from here
-    public byte[] getErrorMessage() {
-        Path errorLocationPath = getResourcePath(DEFAULT_ERROR_FILE_KEY);
-        return Optional
-                .ofNullable(getBytes(errorLocationPath))
-                .orElse("Error accessing file".getBytes());
+    private byte[] deserialize(Object response) {
+        String fqcn = response.getClass().toString();
+        return fqcn
+                .substring(fqcn.lastIndexOf(".") + 1)
+                .getBytes();
     }
 
-    private byte[] getBytes(Path errorLocationPath) {
-        try { return Files.readAllBytes(errorLocationPath); }
-        catch (IOException ignorable) { return null; }
-    }
 }

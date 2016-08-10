@@ -26,7 +26,7 @@ public class HeadersTest {
 
         // then
         then(whenHeaders.getProperties().get("Authorization")).isEqualTo(AUTHORIZATION_VALUE);
-        then(whenHeaders.getRequestMethod()).isEqualTo("GET");
+        then(whenHeaders.getRequestMethod()).isEqualTo(HttpConstants.Method.GET);
     }
 
     @Test
@@ -38,7 +38,7 @@ public class HeadersTest {
         Headers whenHeaders = Headers.fromInputStream(createInputStream(givenHeaders));
 
         // then
-        then(whenHeaders.getRequestMethod()).isEqualTo("POST");
+        then(whenHeaders.getRequestMethod()).isEqualTo(HttpConstants.Method.POST);
         then(whenHeaders.getResource()).isEqualTo("/");
         then(whenHeaders.getRequestProtocol()).isEqualTo("HTTP/1.1");
         then(whenHeaders.getBody()).isEqualTo(HEADER_BODY);

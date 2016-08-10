@@ -1,10 +1,12 @@
 package co.kukurin.server.environment;
 
+import co.kukurin.Service;
 import co.kukurin.custom.ErrorHandler;
 import co.kukurin.custom.Optional;
 import co.kukurin.server.Server;
 import co.kukurin.server.ServerLogger;
 import co.kukurin.server.request.PathResolver;
+import co.kukurin.server.resource.Resource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -67,25 +69,14 @@ public class ServerEnvironmentImpl implements ServerEnvironment {
 
     private PathResolver getPathResolver() {
         String serverBaseDirectory = properties.getOrDefaultString(WEB_BASE_DIR_KEY, DEFAULT_WEB_BASE_DIR);
-        Map<String, String> resourceToActualFile = getServerResources(serverBaseDirectory);
+        Map<String, Resource> resourceToActualFile = getServerResources(serverBaseDirectory);
         return new PathResolver(serverBaseDirectory, resourceToActualFile);
     }
 
-    private Map<String, String> getServerResources(String serverBaseDirectory) {
-        try {
-            Map<String, String> map = Files
-                    .walk(Paths.get(serverBaseDirectory))
-                    .filter(Files::isRegularFile)
-                    .collect(Collectors.toMap(
-                            file -> "/" + ((Path) file).getFileName().toString(), // TODO String -> class
-                            file -> "/" + ((Path) file).getFileName().toString()));
-            map.put("/", "/index.html");
-            return map;
-        } catch(IOException e) {
-            logger.info("No resource mappings found: " + e.getMessage());
-        }
-
-        return null;
+    private Map<String, Resource> getServerResources(String serverBaseDirectory) {
+        Map<String, Resource> map = new HashMap<>();
+        map.put("/", new Service());
+        return map;
     }
 
     @Override

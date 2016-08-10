@@ -1,6 +1,7 @@
 package co.kukurin.server;
 
 import co.kukurin.custom.ErrorHandler;
+import co.kukurin.custom.Optional;
 import co.kukurin.server.request.headers.Headers;
 import co.kukurin.server.request.PathResolver;
 
@@ -10,6 +11,9 @@ import java.io.PushbackInputStream;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static co.kukurin.server.environment.InitializationConstants.DEFAULT_ERROR_FILE_KEY;
+import static co.kukurin.server.environment.InitializationConstants.DEFAULT_ERROR_MESSAGE_BYTES;
 
 class ServerExecutor implements Runnable {
 
@@ -57,23 +61,32 @@ class ServerExecutor implements Runnable {
     private void outputRequestedResource() throws IOException {
         ErrorHandler
                 .catchIfThrows(() -> {
-                    Path resourcePath = pathResolver.getResourcePath(headers.getResource());
-
-                    byte[] fileContents = Files.readAllBytes(resourcePath);
-                    outputStream.write(fileContents);
+                    // Path resourcePath = pathResolver.getResourceResponse(headers.getResource(), headers.getRequestMethod());
+                    byte[] response = pathResolver.getResourceResponse(headers.getResource(), headers.getRequestMethod());
+                    outputStream.write(response);
                 }).handleExceptionAs(e -> {
                     logger.error("Error getting resources", e);
-                    redirectToError();
+                    ErrorHandler.ignoreIfThrows(() -> outputStream.write(DEFAULT_ERROR_MESSAGE_BYTES));
                 });
         outputStream.flush();
     }
 
-    private void redirectToError() {
-        // TODO not really the job of pathResolver
-        // also should send a 404 header.
-        byte[] errorMessageClientOutput = pathResolver.getErrorMessage();
-        ErrorHandler.ignoreIfThrows(() -> outputStream.write(errorMessageClientOutput));
-    }
+//    private void redirectToError() {
+//        byte[] errorMessageClientOutput = getErrorMessage();
+//        ErrorHandler.ignoreIfThrows(() -> outputStream.write(errorMessageClientOutput));
+//    }
+//
+//    private byte[] getErrorMessage() {
+//        Path errorLocationPath = pathResolver.getResourceResponse(DEFAULT_ERROR_FILE_KEY, headers.getRequestMethod());
+//        return Optional
+//                .ofNullable(getBytes(errorLocationPath))
+//                .orElse(DEFAULT_ERROR_MESSAGE_BYTES);
+//    }
+//
+//    private byte[] getBytes(Path errorLocationPath) {
+//        try { return Files.readAllBytes(errorLocationPath); }
+//        catch (IOException ignorable) { return null; }
+//    }
 
     private void closeStreams() {
         ErrorHandler.ignoreIfThrows(() -> {
