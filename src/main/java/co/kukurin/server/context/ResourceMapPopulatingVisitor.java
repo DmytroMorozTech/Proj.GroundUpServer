@@ -27,9 +27,9 @@ public class ResourceMapPopulatingVisitor extends SimpleFileVisitor<Path> {
 
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-        boolean hasAlreadyVisitedBasePackage = this.resourceNameToClass == null;
+        boolean hasAlreadyVisitedBasePackage = this.resourceNameToClass != null;
 
-        if(hasAlreadyVisitedBasePackage) {
+        if(!hasAlreadyVisitedBasePackage) {
             this.resourceNameToClass = new HashMap<>();
             return FileVisitResult.CONTINUE;
         }
