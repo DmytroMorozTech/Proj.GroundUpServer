@@ -1,22 +1,18 @@
 package co.kukurin.server.resource;
 
-import co.kukurin.server.exception.UnsupportedMethodException;
-
 public class Resource {
 
-    public Object get() {
-        throw new UnsupportedMethodException();
+    // TODO private Map Http.method -> class method
+    // TODO get rid of clazz and getClazz
+
+    private Class<?> clazz;
+
+    public Resource(Class<?> clazz) {
+        this.clazz = clazz;
     }
 
-    public Object post() {
-        throw new UnsupportedMethodException();
-    }
-    public Object put() {
-        throw new UnsupportedMethodException();
-    }
-    
-    public Object delete() {
-        throw new UnsupportedMethodException();
+    public Class<?> getClazz() {
+        return clazz;
     }
 
 }

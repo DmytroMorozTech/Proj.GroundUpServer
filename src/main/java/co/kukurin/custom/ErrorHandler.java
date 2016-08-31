@@ -54,7 +54,7 @@ public class ErrorHandler {
         }
     }
 
-    public static <T> Optional<T> getEmptyIfThrows(ThrowableSupplier<T> supplier) {
+    public static <T> Optional<T> optionalResult(ThrowableSupplier<T> supplier) {
         try {
             return Optional.of(supplier.get());
         } catch(Exception any) {

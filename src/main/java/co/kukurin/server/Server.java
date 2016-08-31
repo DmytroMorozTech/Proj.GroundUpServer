@@ -3,7 +3,8 @@ package co.kukurin.server;
 import co.kukurin.custom.ErrorHandler;
 import co.kukurin.custom.Optional;
 import co.kukurin.server.environment.ServerProperties;
-import co.kukurin.server.request.PathResolver;
+import co.kukurin.server.request.ResourceResolver;
+import co.kukurin.server.request.ResourceResolverImpl;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -17,15 +18,16 @@ public class Server {
     private final ServerLogger logger;
     private final ServerProperties properties;
     private final ExecutorService executorService;
-    private final PathResolver pathResolver;
+    private final ResourceResolver resourceResolver;
 
     public Server(ServerLogger logger,
                   ServerProperties properties,
-                  ExecutorService executorService, PathResolver pathResolver) {
+                  ExecutorService executorService,
+                  ResourceResolver resourceResolver) {
         this.logger = logger;
         this.properties = properties;
         this.executorService = executorService;
-        this.pathResolver = pathResolver;
+        this.resourceResolver = resourceResolver;
     }
 
     @SuppressWarnings("unused") // for now the args are unused, maybe will add some usage later.
@@ -43,6 +45,8 @@ public class Server {
     }
 
     private void serverLoop(ServerSocket serverSocket) {
+        logger.info("Started server on port " + serverSocket.getLocalPort());
+
         while (true) {
             ErrorHandler
                     .catchIfThrows(() -> acceptAndSubmitConnection(serverSocket))
@@ -52,7 +56,7 @@ public class Server {
 
     private void acceptAndSubmitConnection(ServerSocket serverSocket) throws IOException {
         Socket socketClient = serverSocket.accept();
-        ServerExecutor serverExecutor = new ServerExecutor(socketClient, logger, pathResolver);
+        ServerExecutor serverExecutor = new ServerExecutor(socketClient, logger, resourceResolver);
         executorService.submit(serverExecutor);
     }
 
