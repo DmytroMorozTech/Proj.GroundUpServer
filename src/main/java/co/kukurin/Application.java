@@ -1,5 +1,6 @@
 package co.kukurin;
 
+import co.kukurin.server.context.ResourceMapping;
 import co.kukurin.server.environment.ServerEnvironment;
 import co.kukurin.server.environment.ServerEnvironmentImpl;
 import com.sun.deploy.net.BasicHttpRequest;
@@ -12,6 +13,11 @@ public class Application {
     public static void main(String[] args) throws IOException {
         ServerEnvironment environment = new ServerEnvironmentImpl(Application.class);
         environment.run();
+    }
+
+    @ResourceMapping(resourcePath = "/")
+    public String testHandleRequest() {
+        return "Hey there.";
     }
 
     private static void testConnection() throws IOException {

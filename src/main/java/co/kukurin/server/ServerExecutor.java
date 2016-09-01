@@ -1,6 +1,7 @@
 package co.kukurin.server;
 
 import co.kukurin.custom.ErrorHandler;
+import co.kukurin.server.request.ResourceRequest;
 import co.kukurin.server.request.ResourceResolver;
 import co.kukurin.server.request.headers.Headers;
 
@@ -57,7 +58,9 @@ class ServerExecutor implements Runnable {
     private void outputRequestedResource() throws IOException {
         ErrorHandler
                 .catchIfThrows(() -> {
-                    byte[] response = resourceResolver.getResponseBytes(headers.getResource(), headers.getRequestMethod());
+                    ResourceRequest resourceRequest = new ResourceRequest(headers.getRequestMethod(), headers.getResource());
+                    byte[] response = resourceResolver.getResponseBytes(resourceRequest);
+
                     outputStream.write(response);
                 }).handleExceptionAs(e -> {
                     logger.error("Error getting resources", e);

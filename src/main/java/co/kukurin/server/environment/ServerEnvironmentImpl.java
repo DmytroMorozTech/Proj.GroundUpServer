@@ -6,9 +6,10 @@ import co.kukurin.server.Server;
 import co.kukurin.server.ServerLogger;
 import co.kukurin.server.context.ContextIntializer;
 import co.kukurin.server.request.RegularFileResolver;
+import co.kukurin.server.request.ResourceRequest;
 import co.kukurin.server.request.ResourceResolver;
 import co.kukurin.server.request.ResourceResolverImpl;
-import co.kukurin.server.resource.Resource;
+import co.kukurin.server.response.ResourceResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,18 +67,15 @@ public class ServerEnvironmentImpl implements ServerEnvironment {
     }
 
     private ResourceResolver getResourceResolver(Class<?> applicationMainClass) {
-        String serverBaseDirectory = properties.getOrDefaultString(WEB_BASE_DIR_KEY, DEFAULT_WEB_BASE_DIR);
-        RegularFileResolver regularFileResolver = new RegularFileResolver(serverBaseDirectory);
-
-        return new ResourceResolverImpl(regularFileResolver, getServerResources(applicationMainClass), logger);
+        return new ResourceResolverImpl(getServerResources(applicationMainClass), logger);
     }
 
-    private Map<String, Resource> getServerResources(Class<?> applicationMainClass) {
+    private Map<ResourceRequest, ResourceResponse> getServerResources(Class<?> applicationMainClass) {
         // TODO ContextInitializationException
         ContextIntializer contextIntializer = ErrorHandler
                 .optionalResult(() -> new ContextIntializer(applicationMainClass, logger))
                 .orElseThrow(RuntimeException::new);
-        return ErrorHandler.optionalResult(contextIntializer::scan).orElseThrow(RuntimeException::new);
+        return ErrorHandler.optionalResult(contextIntializer::getResourceHandler).orElseThrow(RuntimeException::new);
     }
 
     @Override

@@ -1,56 +1,51 @@
 package co.kukurin.server.request;
 
+import co.kukurin.custom.ErrorHandler;
+import co.kukurin.custom.Optional;
 import co.kukurin.server.ServerLogger;
-import co.kukurin.server.resource.Resource;
+import co.kukurin.server.request.HttpConstants.HttpMethod;
+import co.kukurin.server.response.ResourceResponse;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Map;
 
 public class ResourceResolverImpl implements ResourceResolver {
 
     // not really used anywhere
-    private final RegularFileResolver regularFileResolver;
-    private final Map<String, Resource> resourceToActualFile;
+    private final Map<ResourceRequest, ResourceResponse> requestHandler;
     private final ServerLogger logger;
 
-    public ResourceResolverImpl(RegularFileResolver regularFileResolver,
-                                Map<String, Resource> resourceToActualFile,
+    public ResourceResolverImpl(Map<ResourceRequest, ResourceResponse> requestHandler,
                                 ServerLogger logger) {
-        this.regularFileResolver = regularFileResolver;
-        this.resourceToActualFile = resourceToActualFile;
+        this.requestHandler = requestHandler;
         this.logger = logger;
     }
 
-    public byte[] getResponseBytes(String resource, HttpConstants.Method method) throws IOException {
-        Resource requestedResource = resourceToActualFile.get(withoutStartingForwardSlash(resource));
-        Object response = tryRequestedMethodOnResource(requestedResource, method);
+    public byte[] getResponseBytes(ResourceRequest request) throws IOException {
+        Object response = Optional.ofNullable(requestHandler.get(request))
+                .map(resourceResponse -> this.tryRequestedMethodOnResource(request, resourceResponse))
+                .orElseGet(() -> "Error.");
 
         return deserialize(response);
     }
 
-    private String withoutStartingForwardSlash(String resource) {
-        return resource.charAt(0) == '/' ? resource.substring(1) : resource;
-    }
+    // TODO actual method parameters, etc.
+    private Object tryRequestedMethodOnResource(ResourceRequest request, ResourceResponse resourceResponse) {
+        Method method = resourceResponse.getMethod();
 
-    // TODO this should actually be done during context init.
-    private Object tryRequestedMethodOnResource(Resource requestedResource, HttpConstants.Method httpMethod) {
-        Class<?> requestedClass = requestedResource.getClazz();
-
-        logger.info("Initializing class", requestedClass);
-
-        try {
-            Object instance = requestedClass.getConstructor().newInstance();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return requestedClass.toString();
+        return ErrorHandler
+                .optionalResult(() -> method.invoke(resourceResponse.getMethodOwner()))
+                .orElseGet(() -> {
+                    logger.info("Error processing request", request);
+                    return null;
+                });
     }
 
     private byte[] deserialize(Object response) throws IOException {
         if(isString(response)) {
-            // return regularFileResolver.getContents((String) response);
             return ((String)response).getBytes();
         } else {
             throw new IllegalArgumentException("test");

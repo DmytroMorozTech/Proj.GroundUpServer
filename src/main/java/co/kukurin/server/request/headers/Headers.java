@@ -18,7 +18,7 @@ import static co.kukurin.server.request.headers.HeaderRequestReadState.*;
 
 public class Headers {
 
-    private Method requestMethod;
+    private HttpMethod requestHttpMethod;
     private String resource;
     private String requestProtocol;
     private Map<String, String> properties;
@@ -74,7 +74,7 @@ public class Headers {
             }
         }
 
-        this.requestMethod = Method.valueOf(methodAndResourceAndProtocol[0]);
+        this.requestHttpMethod = HttpMethod.valueOf(methodAndResourceAndProtocol[0]);
         this.resource = methodAndResourceAndProtocol[1];
         this.requestProtocol = methodAndResourceAndProtocol[2];
         return currentState;
@@ -106,7 +106,7 @@ public class Headers {
         final int keyAndValueExpectedSize = 2;
         String[] keyAndValue = flushAndResetStream(outputStream).split(KEY_VALUE_SPLITTER, keyAndValueExpectedSize);
         if(keyAndValue.length != keyAndValueExpectedSize)
-            throw new MalformedRequestException("Unable to split request data into key and value");
+            throw new MalformedRequestException("Unable to split request data into key and resourcePath");
         return keyAndValue;
     }
 
@@ -156,15 +156,15 @@ public class Headers {
     }
 
     private boolean methodCouldContainRequestBody() {
-        return !requestMethod.equals(HttpConstants.Method.GET);
+        return !requestHttpMethod.equals(HttpMethod.GET);
     }
 
     private boolean isSingleNewlineState(HeaderRequestReadState currentState) {
         return currentState == READ_CR_LF || currentState == READ_LF;
     }
 
-    public Method getRequestMethod() {
-        return requestMethod;
+    public HttpMethod getRequestMethod() {
+        return requestHttpMethod;
     }
 
     public String getResource() {

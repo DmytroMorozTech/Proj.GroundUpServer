@@ -8,7 +8,7 @@ public class HttpConstants {
         throwNonInstantiable();
     }
 
-    public enum Method {
+    public enum HttpMethod {
         GET, POST, PUT, DELETE, UPDATE
 
     }
