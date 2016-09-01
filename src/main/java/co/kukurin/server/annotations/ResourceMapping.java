@@ -1,4 +1,4 @@
-package co.kukurin.server.context;
+package co.kukurin.server.annotations;
 
 import java.lang.annotation.*;
 

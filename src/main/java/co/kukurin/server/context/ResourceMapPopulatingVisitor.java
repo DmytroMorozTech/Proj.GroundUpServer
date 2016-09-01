@@ -3,9 +3,9 @@ package co.kukurin.server.context;
 import co.kukurin.custom.ErrorHandler;
 import co.kukurin.custom.Optional;
 import co.kukurin.server.ServerLogger;
+import co.kukurin.server.annotations.ResourceMapping;
 import co.kukurin.server.request.ResourceRequest;
 import co.kukurin.server.response.ResourceResponse;
-import lombok.Getter;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -56,7 +56,7 @@ public class ResourceMapPopulatingVisitor extends SimpleFileVisitor<Path> {
         ErrorHandler
                 .optionalResult(() -> classFromPath(file))
                 .ifPresent(this::putIfHasValidMethodMappings)
-                .orElseDo(() -> logger.info("couldn't load class for file " + file));
+                .orElseDo(() -> logger.info("couldn't infer class from file", file));
 
         return super.visitFile(file, attrs);
     }

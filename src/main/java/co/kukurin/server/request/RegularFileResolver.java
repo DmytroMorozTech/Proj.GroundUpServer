@@ -5,6 +5,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+// TODO implementing file parsing
+// (e.g. return "file.html";)
+
 public class RegularFileResolver {
 
     private final String serverBaseDirectory;

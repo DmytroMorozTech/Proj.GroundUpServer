@@ -14,7 +14,6 @@ import java.util.Map;
 
 public class ResourceResolverImpl implements ResourceResolver {
 
-    // not really used anywhere
     private final Map<ResourceRequest, ResourceResponse> requestHandler;
     private final ServerLogger logger;
 

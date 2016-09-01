@@ -1,6 +1,6 @@
 package co.kukurin;
 
-import co.kukurin.server.context.ResourceMapping;
+import co.kukurin.server.annotations.ResourceMapping;
 import co.kukurin.server.environment.ServerEnvironment;
 import co.kukurin.server.environment.ServerEnvironmentImpl;
 import com.sun.deploy.net.BasicHttpRequest;
