@@ -1,6 +1,7 @@
 package co.kukurin.server;
 
 import co.kukurin.custom.ErrorHandler;
+import co.kukurin.helpers.ResourceSanitizer;
 import co.kukurin.server.request.ResourceRequest;
 import co.kukurin.server.request.ResourceResolver;
 import co.kukurin.server.request.headers.Headers;
@@ -58,7 +59,8 @@ class ServerExecutor implements Runnable {
     private void outputRequestedResource() throws IOException {
         ErrorHandler
                 .catchIfThrows(() -> {
-                    ResourceRequest resourceRequest = new ResourceRequest(headers.getRequestMethod(), headers.getResource());
+                    String sanitizedResourceName = ResourceSanitizer.sanitizeResourceName(headers.getResource());
+                    ResourceRequest resourceRequest = new ResourceRequest(headers.getRequestMethod(), sanitizedResourceName);
                     byte[] response = resourceResolver.getResponseBytes(resourceRequest);
 
                     outputStream.write(response);

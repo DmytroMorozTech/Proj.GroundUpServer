@@ -5,6 +5,7 @@ import co.kukurin.server.environment.ServerEnvironment;
 import co.kukurin.server.environment.ServerEnvironmentImpl;
 import com.sun.deploy.net.BasicHttpRequest;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.net.URL;
 
@@ -18,6 +19,11 @@ public class Application {
     @ResourceMapping(resourcePath = "/")
     public String testHandleRequest() {
         return "Hey there.";
+    }
+
+    @ResourceMapping(resourcePath = "/helloWorld")
+    public String someOtherMethod() {
+        return "Hello, world!";
     }
 
     private static void testConnection() throws IOException {

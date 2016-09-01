@@ -1,5 +1,7 @@
 package co.kukurin.server.annotations;
 
+import lombok.ToString;
+
 import java.lang.annotation.*;
 
 import static co.kukurin.server.request.HttpConstants.HttpMethod;

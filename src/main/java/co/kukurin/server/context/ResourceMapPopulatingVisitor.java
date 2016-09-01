@@ -2,8 +2,10 @@ package co.kukurin.server.context;
 
 import co.kukurin.custom.ErrorHandler;
 import co.kukurin.custom.Optional;
+import co.kukurin.helpers.ResourceSanitizer;
 import co.kukurin.server.ServerLogger;
 import co.kukurin.server.annotations.ResourceMapping;
+import co.kukurin.server.exception.ResourceMappingException;
 import co.kukurin.server.request.ResourceRequest;
 import co.kukurin.server.response.ResourceResponse;
 
@@ -90,15 +92,19 @@ public class ResourceMapPopulatingVisitor extends SimpleFileVisitor<Path> {
                                                              Method method,
                                                              ResourceMapping resourceMapping) {
         HttpMethod httpMethod = resourceMapping.method();
-        String resourcePath = resourceMapping.resourcePath();
+        String resourcePath = ResourceSanitizer.sanitizeResourceName(resourceMapping.resourcePath());
 
         ResourceRequest resourceRequest = new ResourceRequest(httpMethod, resourcePath);
-        if(this.resourceHandler.get(resourceRequest) != null)
-            throw new RuntimeException("Found duplicate mapping for resource: " + resourceRequest); // TODO DuplicateResourceMappingException
+        requireMappingNotToBePresent(resourceMapping, resourceRequest);
 
         method.setAccessible(true);
         ResourceResponse resourceResponse = new ResourceResponse(methodOwner, method);
         this.resourceHandler.put(resourceRequest, resourceResponse);
+    }
+
+    private void requireMappingNotToBePresent(ResourceMapping resourceMapping, ResourceRequest resourceRequest) {
+        if(this.resourceHandler.get(resourceRequest) != null)
+            throw new ResourceMappingException(resourceMapping);
     }
 
     private String classNameFromPath(Path file) {

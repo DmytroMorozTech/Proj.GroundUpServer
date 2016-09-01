@@ -1,5 +1,6 @@
 package co.kukurin.server.context;
 
+import co.kukurin.helpers.ResourceSanitizer;
 import co.kukurin.server.ServerLogger;
 import co.kukurin.server.request.ResourceRequest;
 import co.kukurin.server.response.ResourceResponse;
@@ -13,7 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 
 public class ContextIntializer {
@@ -26,7 +26,7 @@ public class ContextIntializer {
     private final ServerLogger logger;
 
     public ContextIntializer(Class<?> applicationMainClass,
-                             ServerLogger logger) throws IOException {
+                             ResourceSanitizer resourceSanitizer, ServerLogger logger) throws IOException {
         this.classLoader = applicationMainClass.getClassLoader();
         this.logger = logger;
 
@@ -53,7 +53,7 @@ public class ContextIntializer {
             } catch (URISyntaxException shouldNeverOccur) {}
         }
 
-        logger.info("Loaded: ", resourceMapPopulatingVisitor.getResourceHandler());
+        logger.info("Loaded:", resourceMapPopulatingVisitor.getResourceHandler());
         return resourceMapPopulatingVisitor.getResourceHandler();
     }
 }

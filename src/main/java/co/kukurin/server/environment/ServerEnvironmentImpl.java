@@ -2,9 +2,11 @@ package co.kukurin.server.environment;
 
 import co.kukurin.custom.ErrorHandler;
 import co.kukurin.custom.Optional;
+import co.kukurin.helpers.ResourceSanitizer;
 import co.kukurin.server.Server;
 import co.kukurin.server.ServerLogger;
 import co.kukurin.server.context.ContextIntializer;
+import co.kukurin.server.exception.ContextInitializationException;
 import co.kukurin.server.request.RegularFileResolver;
 import co.kukurin.server.request.ResourceRequest;
 import co.kukurin.server.request.ResourceResolver;
@@ -26,11 +28,13 @@ public class ServerEnvironmentImpl implements ServerEnvironment {
 
     private final ServerProperties properties;
     private final ServerLogger logger;
+    private final ResourceSanitizer resourceSanitizer;
     private final ExecutorService executorService;
     private final ResourceResolver resourceResolver;
     private final Server server;
 
     public ServerEnvironmentImpl(Class<?> applicationMainClass) {
+        this.resourceSanitizer = new ResourceSanitizer();
         this.logger = ServerLogger.getInstance();
         this.properties = loadProperties();
         this.executorService = getExecutorService();
@@ -71,11 +75,10 @@ public class ServerEnvironmentImpl implements ServerEnvironment {
     }
 
     private Map<ResourceRequest, ResourceResponse> getServerResources(Class<?> applicationMainClass) {
-        // TODO ContextInitializationException
         ContextIntializer contextIntializer = ErrorHandler
-                .optionalResult(() -> new ContextIntializer(applicationMainClass, logger))
-                .orElseThrow(RuntimeException::new);
-        return ErrorHandler.optionalResult(contextIntializer::getResourceHandler).orElseThrow(RuntimeException::new);
+                .optionalResult(() -> new ContextIntializer(applicationMainClass, resourceSanitizer, logger))
+                .orElseThrow(ContextInitializationException::new);
+        return ErrorHandler.optionalResult(contextIntializer::getResourceHandler).orElseThrow(ContextInitializationException::new);
     }
 
     @Override
