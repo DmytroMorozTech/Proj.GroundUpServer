@@ -56,9 +56,13 @@ public class ResourceMapPopulatingVisitor extends SimpleFileVisitor<Path> {
         ErrorHandler
                 .optionalResult(() -> classFromPath(file))
                 .ifPresent(this::putIfHasValidMethodMappings)
-                .orElseDo(() -> System.out.println("didn't load class for file " + file)); // TODO logger
+                .orElseDo(() -> logger.info("couldn't load class for file " + file));
 
         return super.visitFile(file, attrs);
+    }
+
+    private Class<?> classFromPath(Path file) throws ClassNotFoundException {
+        return Class.forName(this.packageName + PACKAGE_SEPARATOR + classNameFromPath(file));
     }
 
     private void putIfHasValidMethodMappings(Class<?> clazz) {
@@ -95,10 +99,6 @@ public class ResourceMapPopulatingVisitor extends SimpleFileVisitor<Path> {
         method.setAccessible(true);
         ResourceResponse resourceResponse = new ResourceResponse(methodOwner, method);
         this.resourceHandler.put(resourceRequest, resourceResponse);
-    }
-
-    private Class<?> classFromPath(Path file) throws ClassNotFoundException {
-        return Class.forName(this.packageName + PACKAGE_SEPARATOR + classNameFromPath(file));
     }
 
     private String classNameFromPath(Path file) {
