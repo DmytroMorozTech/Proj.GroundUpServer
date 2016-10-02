@@ -2,24 +2,20 @@ package co.kukurin.server.request;
 
 import co.kukurin.custom.ErrorHandler;
 import co.kukurin.custom.Optional;
-import co.kukurin.helpers.ResourceSanitizer;
-import co.kukurin.server.ServerLogger;
-import co.kukurin.server.request.HttpConstants.HttpMethod;
+import co.kukurin.server.logging.ServerLoggerImpl;
 import co.kukurin.server.response.ResourceResponse;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Map;
 
 public class ResourceResolverImpl implements ResourceResolver {
 
     private final Map<ResourceRequest, ResourceResponse> requestHandler;
-    private final ServerLogger logger;
+    private final ServerLoggerImpl logger;
 
     public ResourceResolverImpl(Map<ResourceRequest, ResourceResponse> requestHandler,
-                                ServerLogger logger) {
+                                ServerLoggerImpl logger) {
         this.requestHandler = requestHandler;
         this.logger = logger;
     }

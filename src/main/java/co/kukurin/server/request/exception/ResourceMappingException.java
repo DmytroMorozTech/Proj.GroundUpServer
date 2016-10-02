@@ -1,6 +1,7 @@
-package co.kukurin.server.exception;
+package co.kukurin.server.request.exception;
 
 import co.kukurin.server.annotations.ResourceMapping;
+import co.kukurin.server.exception.ServerException;
 
 public class ResourceMappingException extends ServerException {
 

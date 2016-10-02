@@ -1,4 +1,4 @@
-package co.kukurin.server.request.headers;
+package co.kukurin.server.request.exception;
 
 import co.kukurin.server.exception.ServerException;
 

@@ -2,6 +2,7 @@ package co.kukurin.server;
 
 import co.kukurin.custom.ErrorHandler;
 import co.kukurin.helpers.ResourceSanitizer;
+import co.kukurin.server.logging.ServerLoggerImpl;
 import co.kukurin.server.request.ResourceRequest;
 import co.kukurin.server.request.ResourceResolver;
 import co.kukurin.server.request.headers.Headers;
@@ -16,7 +17,7 @@ import static co.kukurin.server.environment.InitializationConstants.DEFAULT_ERRO
 class ServerExecutor implements Runnable {
 
     private final Socket socket;
-    private final ServerLogger logger;
+    private final ServerLoggerImpl logger;
     private final ResourceResolver resourceResolver;
 
     private PushbackInputStream inputStream;
@@ -24,7 +25,7 @@ class ServerExecutor implements Runnable {
     private Headers headers;
 
     ServerExecutor(Socket socket,
-                   ServerLogger logger,
+                   ServerLoggerImpl logger,
                    ResourceResolver resourceResolver) {
         this.socket = socket;
         this.logger = logger;

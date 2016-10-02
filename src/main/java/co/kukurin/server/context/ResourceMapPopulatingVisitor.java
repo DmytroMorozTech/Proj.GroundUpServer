@@ -3,9 +3,9 @@ package co.kukurin.server.context;
 import co.kukurin.custom.ErrorHandler;
 import co.kukurin.custom.Optional;
 import co.kukurin.helpers.ResourceSanitizer;
-import co.kukurin.server.ServerLogger;
+import co.kukurin.server.logging.ServerLoggerImpl;
 import co.kukurin.server.annotations.ResourceMapping;
-import co.kukurin.server.exception.ResourceMappingException;
+import co.kukurin.server.request.exception.ResourceMappingException;
 import co.kukurin.server.request.ResourceRequest;
 import co.kukurin.server.response.ResourceResponse;
 
@@ -29,10 +29,10 @@ public class ResourceMapPopulatingVisitor extends SimpleFileVisitor<Path> {
 
     private final String packageName;
     private Map<ResourceRequest, ResourceResponse> resourceHandler;
-    private final ServerLogger logger;
+    private final ServerLoggerImpl logger;
 
     ResourceMapPopulatingVisitor(String packageName,
-                                 ServerLogger logger) {
+                                 ServerLoggerImpl logger) {
         this.packageName = packageName;
         this.logger = logger;
     }
@@ -95,14 +95,14 @@ public class ResourceMapPopulatingVisitor extends SimpleFileVisitor<Path> {
         String resourcePath = ResourceSanitizer.sanitizeResourceName(resourceMapping.resourcePath());
 
         ResourceRequest resourceRequest = new ResourceRequest(httpMethod, resourcePath);
-        requireMappingNotToBePresent(resourceMapping, resourceRequest);
+        requireEmptyMappingForGivenResource(resourceMapping, resourceRequest);
 
         method.setAccessible(true);
         ResourceResponse resourceResponse = new ResourceResponse(methodOwner, method);
         this.resourceHandler.put(resourceRequest, resourceResponse);
     }
 
-    private void requireMappingNotToBePresent(ResourceMapping resourceMapping, ResourceRequest resourceRequest) {
+    private void requireEmptyMappingForGivenResource(ResourceMapping resourceMapping, ResourceRequest resourceRequest) {
         if(this.resourceHandler.get(resourceRequest) != null)
             throw new ResourceMappingException(resourceMapping);
     }

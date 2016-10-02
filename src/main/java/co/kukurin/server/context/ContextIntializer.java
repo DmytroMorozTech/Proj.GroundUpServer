@@ -1,10 +1,8 @@
 package co.kukurin.server.context;
 
-import co.kukurin.helpers.ResourceSanitizer;
-import co.kukurin.server.ServerLogger;
+import co.kukurin.server.logging.ServerLoggerImpl;
 import co.kukurin.server.request.ResourceRequest;
 import co.kukurin.server.response.ResourceResponse;
-import lombok.Getter;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,20 +16,23 @@ import java.util.Map;
 
 public class ContextIntializer {
 
-    public static final char PACKAGE_SEPARATOR = '.';
+    static final char PACKAGE_SEPARATOR = '.';
 
     private final ClassLoader classLoader;
-    @Getter
     private final Map<ResourceRequest, ResourceResponse> resourceHandler;
-    private final ServerLogger logger;
+    private final ServerLoggerImpl logger;
 
     public ContextIntializer(Class<?> applicationMainClass,
-                             ResourceSanitizer resourceSanitizer, ServerLogger logger) throws IOException {
+                             ServerLoggerImpl logger) throws IOException {
         this.classLoader = applicationMainClass.getClassLoader();
         this.logger = logger;
 
         String applicationMainPackage = extractPackageFromClassname(applicationMainClass);
         this.resourceHandler = searchForClassesInPackage(applicationMainPackage);
+    }
+
+    public Map<ResourceRequest, ResourceResponse> getResourceHandler() {
+        return resourceHandler;
     }
 
     private String extractPackageFromClassname(Class<?> applicationMainClass) {

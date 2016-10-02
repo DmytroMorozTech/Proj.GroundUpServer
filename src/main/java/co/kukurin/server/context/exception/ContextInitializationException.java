@@ -1,4 +1,6 @@
-package co.kukurin.server.exception;
+package co.kukurin.server.context.exception;
+
+import co.kukurin.server.exception.ServerException;
 
 public class ContextInitializationException extends ServerException {
 

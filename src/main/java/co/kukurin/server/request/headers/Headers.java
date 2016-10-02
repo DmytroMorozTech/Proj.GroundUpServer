@@ -1,8 +1,7 @@
 package co.kukurin.server.request.headers;
 
 import co.kukurin.custom.Optional;
-import co.kukurin.server.exception.ServerException;
-import co.kukurin.server.request.HttpConstants;
+import co.kukurin.server.request.exception.MalformedRequestException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

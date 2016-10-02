@@ -2,10 +2,9 @@ package co.kukurin.server;
 
 import co.kukurin.custom.ErrorHandler;
 import co.kukurin.custom.Optional;
-import co.kukurin.helpers.ResourceSanitizer;
 import co.kukurin.server.environment.ServerProperties;
+import co.kukurin.server.logging.ServerLoggerImpl;
 import co.kukurin.server.request.ResourceResolver;
-import co.kukurin.server.request.ResourceResolverImpl;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -16,12 +15,12 @@ import static co.kukurin.server.environment.InitializationConstants.*;
 
 public class Server {
 
-    private final ServerLogger logger;
+    private final ServerLoggerImpl logger;
     private final ServerProperties properties;
     private final ExecutorService executorService;
     private final ResourceResolver resourceResolver;
 
-    public Server(ServerLogger logger,
+    public Server(ServerLoggerImpl logger,
                   ServerProperties properties,
                   ExecutorService executorService,
                   ResourceResolver resourceResolver) {
