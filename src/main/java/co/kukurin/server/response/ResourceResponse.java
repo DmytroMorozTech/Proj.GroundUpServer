@@ -9,9 +9,6 @@ import java.lang.reflect.Method;
 @ToString
 public class ResourceResponse {
 
-    // TODO private Map Http.method -> class method?
-    // TODO get rid of clazz and getClazz
-
     private final Object methodOwner;
     private final Method method;
 
